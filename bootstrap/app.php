@@ -106,6 +106,26 @@ $app->configure('app');
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Register Middleware
+|--------------------------------------------------------------------------
+*/
+
+ $app->middleware([
+     App\Http\Middleware\CorsMiddleware::class
+ ]);
+
+ /*
+|--------------------------------------------------------------------------
+| Register Service Providers
+|--------------------------------------------------------------------------
+*/
+
+$app->register(App\Providers\CatchAllOptionsRequestsProvider::class);
+
+
+
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
