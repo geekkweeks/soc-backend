@@ -11,16 +11,31 @@ use Ramsey\Uuid\Uuid;
 class ClientController extends Controller
 {
 
-    public function index()
+    public function index($pageNo = null, $pageSize = null)
     {
-        $client = Client::all();
-        return response()->json($client);
+        if (!is_null($pageNo) && !is_null($pageSize))
+            $clients = DB::table('clients')->skip($pageNo)->take($pageSize)->get();
+        else{
+            $clients = DB::table('clients')->take(100)->get();
+        }            
+
+        $totalRows =  Client::count();
+        return response()->json([
+            'status' => 'success',
+            'totalRows' => $totalRows,
+            'message' => '',
+            'data' => $clients
+        ], 200);
     }
 
     public function show($id)
     {
         $client = Client::find($id);
-        return response()->json($client);
+        return response()->json([
+            'status' => 'success',
+            'message' => '',
+            'data' => $client
+        ], 200);
     }
 
     public function create(Request $request)
@@ -29,18 +44,18 @@ class ClientController extends Controller
 
         $client = new Client();
         //TODO: need helper to generate UUID automatically for all model
-        $client->Id = Uuid::uuid4()->toString();;
-        $client->Name = $request->name;
-        $client->ShortName = $request->shortName;
-        $client->Website = $request->website;
-        $client->PageTitle = $request->pageTitle;
-        $client->Description = $request->description;
-        $client->LogoUrl = $request->logoUrl;
-        $client->CreatedUtc = $utcNow;
-        $client->CreatedBy = 'System';
-        $client->IsPublished = $request->isPublished;
+        $client->id = Uuid::uuid4()->toString();
+        $client->name = $request->name;
+        $client->short_name = $request->short_name;
+        $client->website = $request->website;
+        $client->pagetitle = $request->pagetitle;
+        $client->description = $request->description;
+        $client->logo_url = $request->logo_url;
+        $client->created_at = $utcNow;
+        $client->created_by = 'System';
+        $client->is_active = $request->is_active;
         $client->save();
-        
+
         return response()->json([
             'status' => 'success',
             'message' => 'Client Successfully Created!',
@@ -55,15 +70,15 @@ class ClientController extends Controller
         $status = "success";
         try {
             $update_data = Client::where('id', $id)->update([
-                'Name' => $request->name,
-                'ShortName' => $request->shortname,
-                'Website' => $request->website,
-                'PageTitle' => $request->pagetitle,
-                'Description' => $request->description,
-                'LogoUrl' => $request->logourl,
-                'UpdatedUtc' => $utcNow,
-                'UpdatedBy' => $request->updatedby,
-                'IsPublished' => $request->ispublished,
+                'name' => $request->name,
+                'short_name' => $request->short_name,
+                'website' => $request->website,
+                'pagetitle' => $request->pagetitle,
+                'description' => $request->description,
+                'logo_url' => $request->logo_url,
+                'updated_at' => $utcNow,
+                'updated_by' => 'System',
+                'is_active' => $request->is_active,
             ]);
             if (!$update_data) {
                 $message = 'Client failed to update';
@@ -76,7 +91,7 @@ class ClientController extends Controller
 
         return response()->json([
             'status' => $status,
-            'message' => $message,
+            'message' => $message
         ], 200);
     }
 
@@ -85,10 +100,10 @@ class ClientController extends Controller
         $message = 'Client delete successfully';
         $status = "success";
         try {
-            $client = DB::table('trendata_clients')->where('id', $id);
-            $client->delete();
+            // $client = DB::table('clients')->where('id', $id);
+            $client= Client::where('id', $id)->delete();
+            // $client->delete();
             if (!$client) {
-                $isContinue = false;
                 $message = "Data not found with id:" . $id;
                 $status = "error";
             }
