@@ -126,6 +126,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 */
 
 $app->register(App\Providers\CatchAllOptionsRequestsProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 
 
 
