@@ -76,14 +76,15 @@ $router->group(['prefix' => 'api', 'middleware' => ['jwt.auth']], function () us
 #endregion
 
 // API with JWT
-// $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
-//     $router->get('me', 'AuthController@me');
-//     $router->get('/client[/{pageNo}/{pageSize}]', 'ClientController@index');
-//     $router->get('/client/{id}', 'ClientController@show');
-//     $router->post('/client/save', 'ClientController@create');
-//     $router->put('/client/update/{id}', 'ClientController@update');
-//     $router->delete('/client/delete/{id}', 'ClientController@destroy');
-// });
+$router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
+    $router->get('me', 'AuthController@me');
+    $router->get('/client[/{pageNo}/{pageSize}]', 'ClientController@index');
+    $router->post('/client/search', 'ClientController@search');
+    $router->get('/client/{id}', 'ClientController@show');
+    $router->post('/client/save', 'ClientController@create');
+    $router->put('/client/update/{id}', 'ClientController@update');
+    $router->delete('/client/delete/{id}', 'ClientController@destroy');
+});
 
 
 

@@ -70,18 +70,19 @@ class AuthController extends Controller
 
         $credentials = $request->only(['username', 'password']);
 
-        if (!$token = Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        $user = DB::table('users')->select('id','username')->where('username', $request->username)->first();
+        if (!$user) {
+            return response()->json(['message' => 'user doesnt exist'], 500);
         }
 
-        $user = DB::table('users')->where('username', $request->username)->first();
-        
+        if (!$token = auth()->claims(['id' => $user->id, 'username' => $user->username])->attempt($credentials)) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         return response()->json([
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => null,
-            'username' => $user->username,
-            'id' => $user->id
+            'user' => $user
         ], 200);
     }
 
@@ -97,10 +98,10 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->messages()], 200);
         }
 
-		//Request is validated, do logout        
+        //Request is validated, do logout        
         try {
             JWTAuth::invalidate($request->token);
- 
+
             return response()->json([
                 'success' => true,
                 'message' => 'User has been logged out'

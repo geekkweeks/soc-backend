@@ -11,15 +11,14 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Redis;
 use App\Libraries\Helpers;
+use Illuminate\Database\MySqlConnection;
 
 
 class ClientController extends Controller
 {
     public function __construct()
     {
-        //TODO: Please uncomment if want to using token
-        // $this->user = JWTAuth::parseToken()->authenticate();
-        
+        $this->user = JWTAuth::parseToken()->authenticate();
     }
 
     public function index($pageNo = null, $pageSize = null)
@@ -73,10 +72,10 @@ class ClientController extends Controller
         ], 200);
     }
 
-    public function showredis($id,$total)
+    public function showredis($id, $total)
     {
         $cachedClient = $this->setorgetredis('client_' . $id, null, null, 'get');
-        
+
         if (isset($cachedClient)) {
             $client = json_decode($cachedClient, FALSE);
 
@@ -100,26 +99,40 @@ class ClientController extends Controller
 
     public function create(Request $request)
     {
-        $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
-        $id = Uuid::uuid4()->toString();
-        $client = new Client();
-        //TODO: need helper to generate UUID automatically for all model
-        $client->id = $id;
-        $client->name = $request->name;
-        $client->short_name = $request->short_name;
-        $client->website = $request->website;
-        $client->pagetitle = $request->pagetitle;
-        $client->description = $request->description;
-        $client->logo_url = $request->logo_url;
-        $client->created_at = $utcNow;
-        $client->created_by = 'System';
-        $client->is_active = $request->is_active;
-        $client->save();
+
+        $dbName = 'db_' .$request->short_name; 
+        $sqlQuery = 'CREATE DATABASE ' .$dbName;
+        $resSchema = DB::statement($sqlQuery);
+        var_dump($resSchema);
+        if ($resSchema > 0) {
+            $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
+            $id = Uuid::uuid4()->toString();
+            $client = new Client();
+            //TODO: need helper to generate UUID automatically for all model
+            $client->id = $id;
+            $client->name = $request->name;
+            $client->short_name = $request->short_name;
+            $client->website = $request->website;
+            $client->pagetitle = $request->pagetitle;
+            $client->description = $request->description;
+            $client->logo_url = $request->logo_url;
+            $client->created_at = $utcNow;
+            $client->created_by = 'System';
+            $client->is_active = $request->is_active;
+            $client->db_name = $dbName;
+            $client->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Client Successfully Created!',
+                'data' => $client
+            ], 200);
+        }
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Client Successfully Created!',
-            'data' => $client
+            'status' => 'failed',
+            'message' => 'Something went wrong',
+            'data' => null
         ], 200);
     }
 
@@ -178,15 +191,15 @@ class ClientController extends Controller
         ], 200);
     }
 
-    private function setorgetredis($keyName, $keyValue = null, $expiredTime = null, $type){
+    private function setorgetredis($keyName, $keyValue = null, $expiredTime = null, $type)
+    {
         $redisClient = new \Predis\Client();
-        if($type === 'get'){
+        if ($type === 'get') {
             $res =  $redisClient->get($keyName);
             return $res;
-        }else{
+        } else {
             $redisClient->setex($keyName, $expiredTime, $keyValue);
             return $redisClient->get($keyName);
         }
     }
-
 }
