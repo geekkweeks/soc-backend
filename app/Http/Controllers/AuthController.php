@@ -75,7 +75,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'user doesnt exist'], 500);
         }
 
-        if (!$token = auth()->claims(['id' => $user->id, 'username' => $user->username])->attempt($credentials)) {
+        if (!$token = auth()->setTTL(7200)->claims(['id' => $user->id, 'username' => $user->username])->attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         return response()->json([
