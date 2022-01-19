@@ -79,6 +79,7 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->post('/client/save', 'ClientController@create');
     $router->put('/client/update/{id}', 'ClientController@update');
     $router->delete('/client/delete/{id}', 'ClientController@destroy');
+    $router->get('/client/getall', 'ClientController@getall');
 });
 
 #region Feed
@@ -87,6 +88,18 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->post('/feed/search', 'FeedController@search');
     $router->get('/feed/{id}', 'FeedController@show');
     $router->post('/feed/save', 'FeedController@create');
+});
+#endregion
+
+#region Conv typr
+$router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
+    $router->get('/conversationtype', 'ConversationTypeController@index');
+});
+#endregion
+
+#region talk about
+$router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
+    $router->get('/talkabout', 'TalkAboutController@index');
 });
 #endregion
 

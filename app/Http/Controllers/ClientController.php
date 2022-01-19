@@ -38,6 +38,20 @@ class ClientController extends Controller
         ], 200);
     }
 
+    public function getall()
+    {
+        $clients = DB::table('clients')->get();
+
+        $totalRows =  Client::count();
+        
+        return response()->json([
+            'status' => 'success',
+            'totalRows' => $totalRows,
+            'message' => '',
+            'data' => $clients
+        ], 200);
+    }
+
     public function search(Request $request)
     {
         if (isset($request->search) && trim($request->search !== '')) {
