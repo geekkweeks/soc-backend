@@ -56,12 +56,7 @@ $router->put('/keyword/update/{id}', 'KeywordController@update');
 $router->delete('/keyword/delete/{id}', 'KeywordController@destroy');
 #endregion
 
-#region Feed
-$router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');
-$router->post('/feed/search', 'FeedController@search');
-$router->get('/feed/{id}', 'FeedController@show');
-$router->post('/feed/save', 'FeedController@create');
-#endregion
+
 
 
 #region Users
@@ -86,6 +81,15 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->delete('/client/delete/{id}', 'ClientController@destroy');
 });
 
+#region Feed
+$router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
+    $router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');
+    $router->post('/feed/search', 'FeedController@search');
+    $router->get('/feed/{id}', 'FeedController@show');
+    $router->post('/feed/save', 'FeedController@create');
+});
+#endregion
+
 
 
 $router->get('demo[/{name}]', function ($name = null) {
@@ -103,7 +107,7 @@ Route::get('/', function () {
 #region redis testing connection
 $router->get('redist_test', function () use ($router) {
     $client = new \Predis\Client();
-    $client->set('foo','bar');
+    $client->set('foo', 'bar');
     return 'foo stored as ' . $client->get('foo');
 });
 
