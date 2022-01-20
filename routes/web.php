@@ -21,39 +21,32 @@ use Illuminate\Support\Facades\Redis;
 // });
 
 
-$router->get('/client[/{pageNo}/{pageSize}]', 'ClientController@index');
-$router->get('/client/search', 'ClientController@search');
-$router->get('/client/{id}', 'ClientController@show');
-$router->post('/client/save', 'ClientController@create');
-$router->put('/client/update/{id}', 'ClientController@update');
-$router->delete('/client/delete/{id}', 'ClientController@destroy');
-$router->get('/client/sampleredis/{id}/{total}', 'ClientController@showredis');
 
 #region Media
-$router->post('/media[/{pageNo}/{pageSize}]', 'MediaController@index');
-$router->post('/media/search', 'MediaController@search');
-$router->get('/media/{id}', 'MediaController@show');
-$router->post('/media/save', 'MediaController@create');
-$router->put('/media/update/{id}', 'MediaController@update');
-$router->delete('/media/delete/{id}', 'MediaController@destroy');
+// $router->post('/media[/{pageNo}/{pageSize}]', 'MediaController@index');
+// $router->post('/media/search', 'MediaController@search');
+// $router->get('/media/{id}', 'MediaController@show');
+// $router->post('/media/save', 'MediaController@create');
+// $router->put('/media/update/{id}', 'MediaController@update');
+// $router->delete('/media/delete/{id}', 'MediaController@destroy');
 #endregion
 
 #region Subject
-$router->get('/subject[/{pageNo}/{pageSize}]', 'SubjectController@index');
-$router->get('/subject/search', 'SubjectController@search');
-$router->get('/subject/{id}', 'SubjectController@show');
-$router->post('/subject/save', 'SubjectController@create');
-$router->put('/subject/update/{id}', 'SubjectController@update');
-$router->delete('/subject/delete/{id}', 'SubjectController@destroy');
+// $router->get('/subject[/{pageNo}/{pageSize}]', 'SubjectController@index');
+// $router->get('/subject/search', 'SubjectController@search');
+// $router->get('/subject/{id}', 'SubjectController@show');
+// $router->post('/subject/save', 'SubjectController@create');
+// $router->put('/subject/update/{id}', 'SubjectController@update');
+// $router->delete('/subject/delete/{id}', 'SubjectController@destroy');
 #endregion
 
 #region Keyword
-$router->get('/keyword[/{pageNo}/{pageSize}]', 'KeywordController@index');
-$router->post('/keyword/search', 'KeywordController@search');
-$router->get('/keyword/{id}', 'KeywordController@show');
-$router->post('/keyword/save', 'KeywordController@create');
-$router->put('/keyword/update/{id}', 'KeywordController@update');
-$router->delete('/keyword/delete/{id}', 'KeywordController@destroy');
+// $router->get('/keyword[/{pageNo}/{pageSize}]', 'KeywordController@index');
+// $router->post('/keyword/search', 'KeywordController@search');
+// $router->get('/keyword/{id}', 'KeywordController@show');
+// $router->post('/keyword/save', 'KeywordController@create');
+// $router->put('/keyword/update/{id}', 'KeywordController@update');
+// $router->delete('/keyword/delete/{id}', 'KeywordController@destroy');
 #endregion
 
 
@@ -74,12 +67,12 @@ $router->group(['prefix' => 'api', 'middleware' => ['jwt.auth']], function () us
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->get('me', 'AuthController@me');
     $router->get('/client[/{pageNo}/{pageSize}]', 'ClientController@index');
-    $router->post('/client/search', 'ClientController@search');
+    $router->get('/client/getall', 'ClientController@getall');
     $router->get('/client/{id}', 'ClientController@show');
+    $router->post('/client/search', 'ClientController@search');
     $router->post('/client/save', 'ClientController@create');
     $router->put('/client/update/{id}', 'ClientController@update');
     $router->delete('/client/delete/{id}', 'ClientController@destroy');
-    $router->get('/client/getall', 'ClientController@getall');
 });
 
 #region Feed
