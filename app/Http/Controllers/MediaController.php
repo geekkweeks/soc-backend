@@ -34,6 +34,18 @@ class MediaController extends Controller
         ], 200);
     }
 
+    public function getall()
+    {
+        $medias =  DB::table('medias')->where('is_active', true)->get();
+        $totalRows =  $medias->count();
+        return response()->json([
+            'status' => 'success',
+            'totalRows' => $totalRows,
+            'message' => '',
+            'data' => $medias
+        ], 200);
+    }
+
     public function search(Request $request)
     {
         if (isset($request->search) && trim($request->search !== '')) {

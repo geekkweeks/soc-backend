@@ -74,7 +74,7 @@ class FeedController extends Controller
         $feed->media_id = $request->media_id;
         $feed->taken_date = $request->taken_date;
         $feed->posted_date = $request->posted_date;
-        $feed->origin_id = $request->origin_id;
+        $feed->origin_id = $request->origin_id ?? Uuid::uuid4()->toString(); //auto generated if null
         $feed->Keyword = $request->Keyword;
         $feed->title = $request->title;
         $feed->caption = $request->caption;
@@ -86,8 +86,8 @@ class FeedController extends Controller
         $feed->favs = $request->favs;
         $feed->likes = $request->likes;
         $feed->comment = $request->comment;
-        $feed->age = $request->age;
-        $feed->edu = $request->edu;
+        // $feed->age = $request->age;
+        // $feed->edu = $request->edu;
         $feed->spam = $request->spam;
         $feed->is_active = $request->is_active;
         $feed->created_at = $utcNow;

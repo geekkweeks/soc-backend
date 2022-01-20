@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 
-class SubjectController extends Controller{
+class SubjectController extends Controller
+{
     public function __construct()
     {
     }
@@ -29,6 +30,22 @@ class SubjectController extends Controller{
             'status' => 'success',
             'totalRows' => $totalRows,
             'message' => '',
+            'data' => $subjects
+        ], 200);
+    }
+
+    public function getbyclient($clientid)
+    {
+        $subjects = DB::table('subjects')
+            ->join('clients', 'subjects.client_id', '=', 'clients.id')
+            ->where('client_id', $clientid)
+            ->select('subjects.id', 'subjects.title', 'subjects.color', 'subjects.order_no', 'subjects.is_active', 'clients.name')
+            ->get();
+        $totalRows =  $subjects->count();
+        return response()->json([
+            'status' => 'success',
+            'message' => '',
+            'totalRows' => $totalRows,
             'data' => $subjects
         ], 200);
     }
@@ -133,5 +150,4 @@ class SubjectController extends Controller{
             'message' => $message,
         ], 200);
     }
-
 }
