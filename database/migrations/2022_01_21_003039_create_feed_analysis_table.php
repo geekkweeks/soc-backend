@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFeedAnalysis extends Migration
+class CreateFeedAnalysisTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,10 +16,11 @@ class CreateFeedAnalysis extends Migration
         Schema::create('feed_analysis', function (Blueprint $table) {
             $table->char('id', 36)->primary();
             $table->char('feed_id', 36);
-            $table->char('subject_id', 36)->nullable();
-            $table->char('talk_about_id', 36)->nullable();
-            $table->char('conversation_type_id', 36)->nullable();
+            $table->char('subject', 36)->nullable();
+            $table->string('talk_about')->nullable();
+            $table->string('conversation_type')->nullable();
             $table->text('tags')->nullable();
+            $table->string('corporate')->nullable();
             $table->string('user_type')->nullable();
             $table->string('education')->nullable();
             $table->string('gender')->nullable();
