@@ -117,7 +117,6 @@ class ClientController extends Controller
         $dbName = 'db_' .$request->short_name; 
         $sqlQuery = 'CREATE DATABASE ' .$dbName;
         $resSchema = DB::statement($sqlQuery);
-        var_dump($resSchema);
         if ($resSchema > 0) {
             $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
             $id = Uuid::uuid4()->toString();

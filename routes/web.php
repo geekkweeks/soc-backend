@@ -60,7 +60,7 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');
     $router->get('/feed/{id}', 'FeedController@show');
-    $router->post('/feed/search', 'FeedController@search');    
+    $router->post('/feed/search', 'FeedController@search');
     $router->post('/feed/save', 'FeedController@create');
 });
 #endregion
@@ -68,12 +68,24 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
 #region media
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->get('/media/getall', 'MediaController@getall');
-    $router->get('/media/{id}', 'MediaController@show');    
-    $router->post('/media[/{pageNo}/{pageSize}]', 'MediaController@index');
+    $router->get('/media/{id}', 'MediaController@show');
+    $router->get('/media[/{pageNo}/{pageSize}]', 'MediaController@index');
     $router->post('/media/search', 'MediaController@search');
     $router->post('/media/save', 'MediaController@create');
     $router->put('/media/update/{id}', 'MediaController@update');
     $router->delete('/media/delete/{id}', 'MediaController@destroy');
+});
+#endregion
+
+#region Keyword
+$router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
+    $router->get('/keyword/getall', 'KeywordController@getall');
+    $router->get('/keyword/{id}', 'KeywordController@show');
+    $router->get('/keyword[/{pageNo}/{pageSize}]', 'KeywordController@index');
+    $router->post('/keyword/search', 'KeywordController@search');
+    $router->post('/keyword/save', 'KeywordController@create');
+    $router->put('/keyword/update/{id}', 'KeywordController@update');
+    $router->delete('/keyword/delete/{id}', 'KeywordController@destroy');
 });
 #endregion
 
