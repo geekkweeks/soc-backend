@@ -52,16 +52,12 @@ class SubjectController extends Controller
 
     public function search(Request $request)
     {
-        if (isset($request->search) && trim($request->search !== '')) {
-            $subjects = DB::table('subjects')
-                ->where('title', 'like', '%' . $request->search . '%')
-                ->skip($request->pageNo - 1)
-                ->take($request->pageSize)
-                ->get();
-        } else
-            $subjects =  DB::table('subjects')->skip($request->pageNo)->take($request->pageSize)->get();
+        $totalRows =  0;
+        $subjects = DB::select('call GetSubjects(?,?,?)', array($request->search, $request->pageSize, ($request->pageNo - 1)));
 
-        $totalRows =  $subjects->count();
+        if (count($subjects))
+            $totalRows = $subjects[0]->total_rows;
+
         return response()->json([
             'status' => 'success',
             'totalRows' => $totalRows,
@@ -72,7 +68,7 @@ class SubjectController extends Controller
 
     public function show($id)
     {
-        $subject = DB::table('subjects')->where('id', $id)->first();
+        $subject = DB::select('call GetSubjectById(?)', array($id));
         return response()->json([
             'status' => 'success',
             'message' => '',

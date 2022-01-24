@@ -63,22 +63,35 @@ class KeywordController extends Controller
     {
         $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
         $id = Uuid::uuid4()->toString();
-        $keyword = new Keyword();
-        $keyword->id = $id;
-        $keyword->client_id = $request->client_id;
-        $keyword->media_id = $request->media_id;
-        $keyword->keyword = $request->keyword;
-        $keyword->sequence = $request->sequence;
-        $keyword->created_at = $utcNow;
-        // $subject->created_by = 'System'; 
-        $keyword->is_active = $request->is_active;
-        $keyword->save();
+        $message = 'Keyword updated successfully';
+        $status = "success";
+        $statusCode = 200;
+        try {
+            $keyword = DB::table('keywords')->insert([
+                'id' => $id,
+                'client_id' => $request->client_id,
+                'media_id' => $request->media_id,
+                'keyword' => $request->keyword,
+                'sequence' => $request->sequence,
+                'created_at' => $utcNow,
+                'is_active' => $request->is_active
+            ]);
+            if (!$keyword) {
+                $message = 'Keyword failed to insert';
+                $status = "error";
+                $statusCode = 500;
+            }
+        } catch (\Throwable  $th) {
+            $status = "error";
+            $message = $th->getMessage();
+            $statusCode = 500;
+        }
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'keyword Successfully Created!',
+            'status' => $status,
+            'message' => $message,
             'data' => $keyword
-        ], 200);
+        ], $statusCode);
     }
 
     public function update(Request $request, $id)

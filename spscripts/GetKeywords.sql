@@ -10,9 +10,11 @@ BEGIN
 SET @total_rows = (SELECT COUNT(*) 
 		FROM KEYWORDS K
 		JOIN MEDIAS M ON K.MEDIA_ID = M.ID
+        JOIN CLIENTS C ON K.CLIENT_ID = C.ID
 		where (search is not null && search != '' && 
 				k.keyword like  concat('%', search ,'%') ||
-                m.name like  concat('%', search ,'%')
+                m.name like  concat('%', search ,'%') || 
+                c.name like  concat('%', search ,'%') 
 		   )); 
     
    SELECT 
@@ -20,13 +22,16 @@ SET @total_rows = (SELECT COUNT(*)
 		K.id,
     keyword,
     sequence,
+    C.NAME client_name,
     M.NAME media_name,
     K.is_active    
 FROM KEYWORDS K
 JOIN MEDIAS M ON K.MEDIA_ID = M.ID
+JOIN CLIENTS C ON K.CLIENT_ID = C.ID
 where (search is not null && search != '' && 
 				k.keyword like  concat('%', search ,'%') ||
-                m.name like  concat('%', search ,'%')
+                m.name like  concat('%', search ,'%') || 
+                c.name like  concat('%', search ,'%') 
 	   )
 LIMIT pageSize OFFSET pageNo;
 END //

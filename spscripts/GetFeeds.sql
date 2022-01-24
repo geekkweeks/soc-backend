@@ -22,7 +22,8 @@ SET @total_rows = (
 					F.edu like  concat('%', search ,'%')
 	   )		
 ); 
-SELECT 
+SELECT
+    @total_rows total_rows,
 	f.id,
     c.name client_name,
     title, 

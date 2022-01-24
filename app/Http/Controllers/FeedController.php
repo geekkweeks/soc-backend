@@ -96,7 +96,7 @@ class FeedController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Subject Successfully Created!',
+            'message' => 'Feed Successfully Created!',
             'data' => $feed
         ], 200);
     }

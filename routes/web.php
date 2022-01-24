@@ -46,10 +46,10 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
 
 #region subject
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
-    $router->get('/subject[/{pageNo}/{pageSize}]', 'SubjectController@index');
-    $router->get('/subject/search', 'SubjectController@search');
     $router->get('/subject/{id}', 'SubjectController@show');
-    $router->post('/subject/getbyclient/{clientid}', 'SubjectController@getbyclient');
+    $router->get('/subject/getbyclient/{clientid}', 'SubjectController@getbyclient');
+    $router->get('/subject[/{pageNo}/{pageSize}]', 'SubjectController@index');
+    $router->post('/subject/search', 'SubjectController@search');
     $router->post('/subject/save', 'SubjectController@create');
     $router->put('/subject/update/{id}', 'SubjectController@update');
     $router->delete('/subject/delete/{id}', 'SubjectController@destroy');
@@ -88,6 +88,7 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->delete('/keyword/delete/{id}', 'KeywordController@destroy');
 });
 #endregion
+
 
 #region Conv typr
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
