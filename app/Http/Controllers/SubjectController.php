@@ -105,6 +105,7 @@ class SubjectController extends Controller
         $status = "success";
         try {
             $update_data = Subject::where('id', $id)->update([
+                'client_id' => $request->client_id,
                 'title' => $request->title,
                 'color' => $request->color,
                 'order_no' => $request->order_no,
