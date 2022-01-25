@@ -38,6 +38,7 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->get('/client[/{pageNo}/{pageSize}]', 'ClientController@index');
     $router->get('/client/getall', 'ClientController@getall');
     $router->get('/client/{id}', 'ClientController@show');
+    $router->post('/client/checkdbexist', 'ClientController@checkdbexist');
     $router->post('/client/search', 'ClientController@search');
     $router->post('/client/save', 'ClientController@create');
     $router->put('/client/update/{id}', 'ClientController@update');

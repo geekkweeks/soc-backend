@@ -43,7 +43,7 @@ class ClientController extends Controller
         $clients = DB::table('clients')->get();
 
         $totalRows =  Client::count();
-        
+
         return response()->json([
             'status' => 'success',
             'totalRows' => $totalRows,
@@ -73,6 +73,17 @@ class ClientController extends Controller
             'totalRows' => $totalRows,
             'message' => '',
             'data' => $clients
+        ], 200);
+    }
+
+    public function checkdbexist(Request $request)
+    {
+        $dbName = 'db_' . $request->shortName;
+        $client = DB::table('clients')->where('db_name', $dbName)->first();
+        return response()->json([
+            'status' => 'success',
+            'message' => '',
+            'data' => $client ? true : false,
         ], 200);
     }
 
@@ -114,8 +125,8 @@ class ClientController extends Controller
     public function create(Request $request)
     {
 
-        $dbName = 'db_' .$request->short_name; 
-        $sqlQuery = 'CREATE DATABASE ' .$dbName;
+        $dbName = 'db_' . $request->short_name;
+        $sqlQuery = 'CREATE DATABASE ' . $dbName;
         $resSchema = DB::statement($sqlQuery);
         if ($resSchema > 0) {
             $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
