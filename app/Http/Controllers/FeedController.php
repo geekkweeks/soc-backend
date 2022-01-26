@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Feed;
+use App\Models\FeedAnalysis;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -22,21 +23,21 @@ class FeedController extends Controller
     public function search(Request $request)
     {
         $message = '';
-        $keyCachePattern = 'feed_search_' .($request->pageNo) .'_'.$request->pageSize .'_' .str_replace(' ', '', $request->search);
+        $keyCachePattern = 'feed_search_' . ($request->pageNo) . '_' . $request->pageSize . '_' . str_replace(' ', '', $request->search);
         $totalRows =  0;
-        
+
         $cachedFeeds = $this->setorgetredis(strtolower($keyCachePattern), null, null, 'get');
-        if(isset($cachedFeeds)){
+        if (isset($cachedFeeds)) {
             $feeds = json_decode($cachedFeeds, FALSE);
             $message = 'data get from Redis';
-        }else{
+        } else {
             $message = 'data get from Database';
-            $feeds = DB::select('call GetFeeds(?,?,?)', array($request->search, $request->pageSize, ($request->pageNo - 1)));          
+            $feeds = DB::select('call GetFeeds(?,?,?)', array($request->search, $request->pageSize, ($request->pageNo - 1)));
             //set data key to redis
             $expired_time = 60 * 60; //in second
-            $this->setorgetredis($keyCachePattern, json_encode($feeds), $expired_time, 'set');  
-        }        
-        
+            $this->setorgetredis($keyCachePattern, json_encode($feeds), $expired_time, 'set');
+        }
+
         if (count($feeds))
             $totalRows = $feeds[0]->total_rows;
 
@@ -66,47 +67,90 @@ class FeedController extends Controller
 
     public function create(Request $request)
     {
-        $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
-        $id = Uuid::uuid4()->toString();
-        $feed = new Feed();
-        $feed->id = $id;
-        $feed->client_id = $request->client_id;
-        $feed->media_id = $request->media_id;
-        $feed->taken_date = $request->taken_date;
-        $feed->posted_date = $request->posted_date;
-        $feed->origin_id = $request->origin_id ?? Uuid::uuid4()->toString(); //auto generated if null
-        $feed->Keyword = $request->Keyword;
-        $feed->title = $request->title;
-        $feed->caption = $request->caption;
-        $feed->content = $request->content;
-        $feed->permalink = $request->permalink;
-        $feed->thumblink = $request->thumblink;
-        $feed->replies = $request->replies;
-        $feed->views = $request->views;
-        $feed->favs = $request->favs;
-        $feed->likes = $request->likes;
-        $feed->comment = $request->comment;
-        // $feed->age = $request->age;
-        // $feed->edu = $request->edu;
-        $feed->spam = $request->spam;
-        $feed->is_active = $request->is_active;
-        $feed->created_at = $utcNow;
-        // $sufeedbject->created_by = 'System'; 
-        $feed->save();
+        if (!$request->feed) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Invalid data request',
+                'data' => null
+            ], 500);
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Feed Successfully Created!',
-            'data' => $feed
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+            $feed = (object)$request->feed;
+            $utcNow = Carbon::now('UTC')->format('Y-m-d h:i:s.v'); //yyyy-mm-dd etc
+            $id = Uuid::uuid4()->toString();
+            DB::table('feeds')->insert([
+                'id' => $id,
+                'client_id' => $feed->client_id,
+                'media_id' => $feed->media_id,
+                'taken_date' => $feed->taken_date,
+                'posted_date' => $feed->posted_date,
+                'origin_id' => $feed->origin_id ?? Uuid::uuid4()->toString(), //auto generated if null
+                'keyword' => $feed->keyword,
+                'title' => $feed->title,
+                'caption' => $feed->caption,
+                'content' => $feed->content,
+                'permalink' => $feed->permalink,
+                'thumblink' => $feed->thumblink,
+                'replies' => $feed->replies,
+                'views' => $feed->views,
+                'favs' => $feed->favs,
+                'likes' => $feed->likes,
+                'comment' => $feed->comment,
+                'spam' => $feed->spam,
+                'is_active' => $feed->is_active,
+                'created_at' => $utcNow
+            ]);
+
+            #region analysis
+            $analysis = $request->analysis;
+            if ($analysis) {
+                $analysis = (object)$request->analysis;
+                $idAnalysis = Uuid::uuid4()->toString();
+                DB::table('feed_analysis')->insert([
+                    'id' => $idAnalysis,
+                    'feed_id' => $id,
+                    'subject' => $analysis->subject,
+                    'talk_about' => $analysis->talk_about,
+                    'conversation_type' => $analysis->talk_about,
+                    'tags' =>  $analysis->tags,
+                    'corporate' => $analysis->corporate,
+                    'user_type' => $analysis->user_type,
+                    'education' => $analysis->education,
+                    'gender' => $analysis->gender,
+                    'age' => $analysis->age,
+                    'location' => $analysis->location,
+                    'created_at' => $utcNow
+                ]);
+            }
+            #endregion
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Feed Successfully Created!',
+                'data' => null
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
     }
 
-    private function setorgetredis($keyName, $keyValue = null, $expiredTime = null, $type){
+    private function setorgetredis($keyName, $keyValue = null, $expiredTime = null, $type)
+    {
         $redisClient = new \Predis\Client();
-        if($type === 'get'){
+        if ($type === 'get') {
             $res =  $redisClient->get($keyName);
             return $res;
-        }else{
+        } else {
             $redisClient->setex($keyName, $expiredTime, $keyValue);
             return $redisClient->get($keyName);
         }

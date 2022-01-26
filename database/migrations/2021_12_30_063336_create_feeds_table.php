@@ -19,7 +19,7 @@ class CreateFeedsTable extends Migration
             $table->dateTime('taken_date');
             $table->dateTime('posted_date');
             $table->string('origin_id', 250);
-            $table->string('Keyword', 250);
+            $table->string('keyword', 250);
             $table->string('title', 250);
             $table->longtext('caption')->nullable();
             $table->longtext('content', 250)->nullable();

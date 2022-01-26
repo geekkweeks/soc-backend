@@ -59,8 +59,8 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
 
 #region Feed
 $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
-    $router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');
     $router->get('/feed/{id}', 'FeedController@show');
+    $router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');    
     $router->post('/feed/search', 'FeedController@search');
     $router->post('/feed/save', 'FeedController@create');
 });
