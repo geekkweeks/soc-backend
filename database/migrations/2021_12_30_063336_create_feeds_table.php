@@ -15,6 +15,7 @@ class CreateFeedsTable extends Migration
     {
         Schema::create('feeds', function (Blueprint $table) {
             $table->char('id', 36)->primary();
+            $table->char('client_id', 36);
             $table->char('media_id', 36);
             $table->dateTime('taken_date');
             $table->dateTime('posted_date');
@@ -33,6 +34,7 @@ class CreateFeedsTable extends Migration
             $table->integer('age')->nullable();
             $table->string('edu', 250)->nullable();
             $table->boolean('spam');
+            $table->string('db_name', 250);
             $table->boolean('is_active');
             $table->nullableTimestamps(0);
         });

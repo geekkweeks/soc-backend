@@ -30,11 +30,13 @@ class FeedController extends Controller
         if (isset($cachedFeeds)) {
             $feeds = json_decode($cachedFeeds, FALSE);
             $message = 'data get from Redis';
-        } else {
+        }
+
+        if(!isset($feeds) || empty($feeds)) {
             $message = 'data get from Database';
             $feeds = DB::select('call GetFeeds(?,?,?)', array($request->search, $request->pageSize, ($request->pageNo - 1)));
             //set data key to redis
-            $expired_time = 60 * 60; //in second
+            $expired_time = 10 * 60; //in second
             $this->setorgetredis($keyCachePattern, json_encode($feeds), $expired_time, 'set');
         }
 
@@ -112,12 +114,11 @@ class FeedController extends Controller
                 DB::table('feed_analysis')->insert([
                     'id' => $idAnalysis,
                     'feed_id' => $id,
-                    'subject' => $analysis->subject,
+                    'subject_id' => $analysis->subject_id,
                     'talk_about' => $analysis->talk_about,
                     'conversation_type' => $analysis->talk_about,
                     'tags' =>  $analysis->tags,
                     'corporate' => $analysis->corporate,
-                    'user_type' => $analysis->user_type,
                     'education' => $analysis->education,
                     'gender' => $analysis->gender,
                     'age' => $analysis->age,

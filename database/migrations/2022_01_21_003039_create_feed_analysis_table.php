@@ -16,12 +16,11 @@ class CreateFeedAnalysisTable extends Migration
         Schema::create('feed_analysis', function (Blueprint $table) {
             $table->char('id', 36)->primary();
             $table->char('feed_id', 36);
-            $table->char('subject', 36)->nullable();
+            $table->char('subject_id', 36)->nullable();
             $table->string('talk_about')->nullable();
             $table->string('conversation_type')->nullable();
             $table->text('tags')->nullable();
             $table->string('corporate')->nullable();
-            $table->string('user_type')->nullable();
             $table->string('education')->nullable();
             $table->string('gender')->nullable();
             $table->string('age')->nullable();
