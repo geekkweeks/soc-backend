@@ -57,7 +57,7 @@ class FeedController extends Controller
         if (count($feeds))
             $data = $feeds[0];
         else
-            $data = null;
+            $data = null;       
 
 
         return response()->json([
