@@ -36,7 +36,7 @@ class FeedController extends Controller
             $message = 'data get from Database';
             $feeds = DB::select('call GetFeeds(?,?,?)', array($request->search, $request->pageSize, ($request->pageNo - 1)));
             //set data key to redis
-            $expired_time = 10 * 60; //in second
+            $expired_time = 1 * 60; //in second
             $this->setorgetredis($keyCachePattern, json_encode($feeds), $expired_time, 'set');
         }
 
@@ -116,7 +116,7 @@ class FeedController extends Controller
                     'feed_id' => $id,
                     'subject_id' => $analysis->subject_id,
                     'talk_about' => $analysis->talk_about,
-                    'conversation_type' => $analysis->talk_about,
+                    'conversation_type' => $analysis->conversation_type,
                     'tags' =>  $analysis->tags,
                     'corporate' => $analysis->corporate,
                     'education' => $analysis->education,
