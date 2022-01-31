@@ -7,6 +7,7 @@ BEGIN
 
 SELECT 
 	f.id,
+    FA.feed_id ,
     c.name client_name,
     c.id client_id,
     F.title, 
