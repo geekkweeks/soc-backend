@@ -63,6 +63,8 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router) {
     $router->get('/feed[/{pageNo}/{pageSize}]', 'FeedController@index');    
     $router->post('/feed/search', 'FeedController@search');
     $router->post('/feed/save', 'FeedController@create');
+    $router->put('/feed/update/{id}', 'FeedController@update');
+    $router->delete('/feed/delete/{id}', 'FeedController@destroy');
 });
 #endregion
 

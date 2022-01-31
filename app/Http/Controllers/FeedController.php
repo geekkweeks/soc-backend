@@ -54,9 +54,44 @@ class FeedController extends Controller
     public function show($id)
     {
         $feeds = DB::select('call GetFeedById(?)', array($id));
-        if (count($feeds))
+        if (count($feeds)) {
             $data = $feeds[0];
-        else
+            $resJson = json_encode(array(
+                'feed' => array(
+                    'id' => $data->id,
+                    'client_id' => $data->client_id,
+                    'media_id' => $data->media_id,
+                    'taken_date' => $data->taken_date,
+                    'posted_date' => $data->posted_date,
+                    'keyword' => $data->keyword,
+                    'title' => $data->title,
+                    'caption' => $data->caption,
+                    'content' => $data->content,
+                    'permalink' => $data->permalink,
+                    'thumblink' => $data->thumblink,
+                    'replies' => $data->replies,
+                    'views' => $data->views,
+                    'favs' => $data->favs,
+                    'likes' => $data->likes,
+                    'comment' => $data->comment,
+                    'is_active' => $data->is_active,
+                    'spam' => $data->spam
+                ),
+                'analysis' => array(
+                    'subject_id' => $data->subject_id,
+                    'talk_about' => $data->talk_about,
+                    'conversation_type_id' => $data->conversation_type_id,
+                    'conversation_type' => $data->conversation_type,
+                    'age' => $data->age,
+                    'tags' => $data->tags,
+                    'gender' => $data->gender,
+                    'education' => $data->education,
+                    'corporate' => $data->corporate,
+                    'location' => $data->location
+                )
+            ));
+            $data = json_decode($resJson);
+        } else
             $data = null;
 
 
@@ -189,26 +224,26 @@ class FeedController extends Controller
 
             #region analysis
             $analysis = $request->analysis;
-            $affectedAnalysis = DB::table('feed_analysis')
-                ->where('id', $id)
-                ->update([
-                    'subject_id' => $analysis->subject_id,
-                    'talk_about' => $analysis->talk_about,
-                    'conversation_type' => $analysis->conversation_type,
-                    'tags' =>  $analysis->tags,
-                    'corporate' => $analysis->corporate,
-                    'education' => $analysis->education,
-                    'gender' => $analysis->gender,
-                    'age' => $analysis->age,
-                    'location' => $analysis->location,
-                    'updated_at' => $utcNow
-                ]);
+            if ($analysis && !empty($analysis->feed_id)) {
+                $affectedAnalysis = DB::table('feed_analysis')
+                    ->where('id', $id)
+                    ->update([
+                        'subject_id' => $analysis->subject_id,
+                        'talk_about' => $analysis->talk_about,
+                        'conversation_type' => $analysis->conversation_type,
+                        'tags' =>  $analysis->tags,
+                        'corporate' => $analysis->corporate,
+                        'education' => $analysis->education,
+                        'gender' => $analysis->gender,
+                        'age' => $analysis->age,
+                        'location' => $analysis->location,
+                        'updated_at' => $utcNow
+                    ]);
+            }
 
-            
             #endregion
 
             DB::commit();
-
         } catch (\Throwable  $th) {
             DB::rollback();
             $status = "error";
